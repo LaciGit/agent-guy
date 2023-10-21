@@ -1,6 +1,3 @@
-# agent-guy
-Agent-based modeling in Python
-
 ## Installation
 ### Poetry
 The enviroment is setup with `poetry`. To install the dependencies, run `poetry install` in your terminal. To activate the enviroment, run `poetry shell`.

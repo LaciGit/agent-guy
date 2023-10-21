@@ -1,0 +1,93 @@
+site_name: Agent-Guy
+
+repo_url: https://github.com/LaciGit/agent-guy
+repo_name: agent-guy
+
+nav:
+  - Home: index.md
+  - Development:
+    - Introduction: development.md
+    - Vision and Idea: development/vision.md
+  - About: about.md
+
+plugins:
+  - search
+  - section-index
+  - autorefs
+  - tags
+  - literate-nav:
+      nav_file: SUMMARY.md
+  - git-revision-date-localized:
+      enable_creation_date: false
+      type: timeago
+  - git-authors
+
+markdown_extensions:
+  - attr_list
+  - admonition
+  - pymdownx.details
+  - pymdownx.mark
+  - pymdownx.emoji
+  - pymdownx.magiclink
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.arithmatex:
+      generic: true
+  - toc:
+      permalink: "¤"
+  - footnotes
+
+theme:
+  icon:
+    repo: fontawesome/brands/github
+  name: material
+  features:
+    - header.autohide
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.footer
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.instant.prefetch
+    - toc.integrate
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.annotation
+    - content.code.copy
+  language: en
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+
+copyright: Copyright &copy; László Baló
+extra:
+  social:
+    - icon: fontawesome/solid/paper-plane
+      link: mailto:laszlo.balo@icloud.com
+      name: László Baló
+  generator: false

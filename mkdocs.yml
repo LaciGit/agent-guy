@@ -8,6 +8,7 @@ nav:
   - Development:
     - Introduction: development.md
     - Vision and Idea: development/vision.md
+    - Step 1: development/step1.md
   - About: about.md
 
 plugins:

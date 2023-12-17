@@ -1,6 +1,5 @@
-from agent_guy.world import IWorld
-
 from agent_guy.agent import IPatch
+from agent_guy.world import IWorld
 
 
 class Grid(IWorld):
@@ -32,7 +31,7 @@ class Grid(IWorld):
                 patches[patch.agent_id] = patch
 
         # store the patch ids
-        self.patch_ids = list(patches.keys())
+        self.patch_ids = set(patches.keys())
 
         return patches
 
@@ -75,14 +74,16 @@ class Grid(IWorld):
         patch = self.get_patch(patch_id)
 
         neighbors = set(
-            IPatch.build_id_contract(patch.x - 1, patch.y + 1),
-            IPatch.build_id_contract(patch.x, patch.y + 1),
-            IPatch.build_id_contract(patch.x + 1, patch.y + 1),
-            IPatch.build_id_contract(patch.x - 1, patch.y),
-            IPatch.build_id_contract(patch.x + 1, patch.y),
-            IPatch.build_id_contract(patch.x - 1, patch.y - 1),
-            IPatch.build_id_contract(patch.x, patch.y - 1),
-            IPatch.build_id_contract(patch.x + 1, patch.y - 1),
+            [
+                IPatch.build_id_contract(patch.x - 1, patch.y + 1),
+                IPatch.build_id_contract(patch.x, patch.y + 1),
+                IPatch.build_id_contract(patch.x + 1, patch.y + 1),
+                IPatch.build_id_contract(patch.x - 1, patch.y),
+                IPatch.build_id_contract(patch.x + 1, patch.y),
+                IPatch.build_id_contract(patch.x - 1, patch.y - 1),
+                IPatch.build_id_contract(patch.x, patch.y - 1),
+                IPatch.build_id_contract(patch.x + 1, patch.y - 1),
+            ]
         )
 
         # check if neighbors are in grid
@@ -111,10 +112,12 @@ class Grid(IWorld):
         patch = self.get_patch(patch_id)
 
         neighbors = set(
-            IPatch.build_id_contract(patch.x, patch.y + 1),
-            IPatch.build_id_contract(patch.x - 1, patch.y),
-            IPatch.build_id_contract(patch.x + 1, patch.y),
-            IPatch.build_id_contract(patch.x, patch.y - 1),
+            [
+                IPatch.build_id_contract(patch.x, patch.y + 1),
+                IPatch.build_id_contract(patch.x - 1, patch.y),
+                IPatch.build_id_contract(patch.x + 1, patch.y),
+                IPatch.build_id_contract(patch.x, patch.y - 1),
+            ]
         )
 
         # check if neighbors are in grid

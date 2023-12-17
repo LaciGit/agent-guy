@@ -1,6 +1,8 @@
+from typing import Any
+
 from abc import ABC, abstractmethod
 
-from agent_guy.agent import ITurtle, IPatch
+from agent_guy.agent import IPatch, ITurtle
 from agent_guy.world import Grid
 
 
@@ -8,7 +10,7 @@ class IModel(ABC):
     def __init__(
         self,
         grid: Grid,
-        parameters: dict = dict(),
+        parameters: dict[str, Any] = dict(),
     ) -> None:
         self.grid = grid
         self.parameters = parameters

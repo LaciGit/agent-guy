@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
-from functools import cached_property
-
 from enum import Enum
+from functools import cached_property
 
 
 class Colors(Enum):

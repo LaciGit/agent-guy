@@ -1,6 +1,6 @@
-from agent_guy.agent import Colors, IAgent
-
 from uuid import uuid4
+
+from agent_guy.agent import Colors, IAgent
 
 
 class ITurtle(IAgent):

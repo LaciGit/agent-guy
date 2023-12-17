@@ -1,7 +1,6 @@
 from unittest import TestCase
 
 from agent_guy.agent import IPatch
-
 from tests.mocks.mocks import MyPatch, MyTurtle
 
 

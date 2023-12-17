@@ -1,4 +1,4 @@
-from agent_guy.agent import IAgent, ITurtle, Colors
+from agent_guy.agent import Colors, IAgent, ITurtle
 
 
 class IPatch(IAgent):

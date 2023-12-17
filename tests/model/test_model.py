@@ -1,9 +1,8 @@
 from unittest import TestCase
 
-from agent_guy.world import IWorld, Grid
 from agent_guy.agent import IPatch, ITurtle
 from agent_guy.model import IModel
-
+from agent_guy.world import Grid, IWorld
 from tests.mocks.mocks import MyPatch, MyTurtle
 
 

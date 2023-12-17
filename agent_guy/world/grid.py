@@ -1,4 +1,4 @@
-from agent_guy.agent import IPatch
+from agent_guy.agent import Patch
 from agent_guy.world import IWorld
 
 
@@ -9,14 +9,16 @@ class Grid(IWorld):
         self.height = height
 
         # the patches of the grid
-        self._patches: dict[str, IPatch] = self.build_patches()
+        self._patches: dict[str, Patch] = self._build_patches()
 
         # only present after build was called
         self.patch_ids: set[str] = set(self._patches.keys())
+        self.count_patches: int = len(self.patch_ids)
+        self._update_patches_by_neighbors()
 
         super().__init__()
 
-    def build_patches(self) -> dict[str, IPatch]:
+    def _build_patches(self) -> dict[str, Patch]:
         """build the patches for the grid
 
         Returns:
@@ -27,15 +29,13 @@ class Grid(IWorld):
 
         for x in range(self.width):
             for y in range(self.height):
-                patch = IPatch(x, y)
-                patches[patch.agent_id] = patch
+                patch = Patch(x, y)
 
-        # store the patch ids
-        self.patch_ids = set(patches.keys())
+                patches[patch.agent_id] = patch
 
         return patches
 
-    def get_patch(self, patch_id: str) -> IPatch:
+    def get_patch(self, patch_id: str) -> Patch:
         """get a patch by its id
 
         Args:
@@ -54,8 +54,16 @@ class Grid(IWorld):
 
         return patch
 
-    def get_moore_neighbors(self, patch_id: str) -> dict[str, IPatch]:
-        """get the moore neighbors of the patch as ids
+    def get_neighbors(
+        self,
+        patch_id: str,
+        type: str,
+        ignore_oob: bool = False,
+    ) -> set[str]:
+        """get the neighbors of the patch as ids
+
+        ### moore neighbors
+        get the moore neighbors of the patch as ids
         if the patch has id 3_3, the moore neighbors are:
         2_2    2_3    2_4
         3_2    None   3_4
@@ -63,65 +71,81 @@ class Grid(IWorld):
 
         3_3 is not included, nor the None
 
-
-        Args:
-            patch_id (str): the patch id
-
-        Returns:
-            list[str]: the moore neighbors as ids
-        """
-
-        patch = self.get_patch(patch_id)
-
-        neighbors = set(
-            [
-                IPatch.build_id_contract(patch.x - 1, patch.y + 1),
-                IPatch.build_id_contract(patch.x, patch.y + 1),
-                IPatch.build_id_contract(patch.x + 1, patch.y + 1),
-                IPatch.build_id_contract(patch.x - 1, patch.y),
-                IPatch.build_id_contract(patch.x + 1, patch.y),
-                IPatch.build_id_contract(patch.x - 1, patch.y - 1),
-                IPatch.build_id_contract(patch.x, patch.y - 1),
-                IPatch.build_id_contract(patch.x + 1, patch.y - 1),
-            ]
-        )
-
-        # check if neighbors are in grid
-        if not neighbors.issubset(self.patch_ids):
-            raise ValueError(f"Patch {patch_id} has neighbors outside of grid")
-
-        return {p: self.get_patch(p) for p in neighbors}
-
-    def get_von_neumann_neighbors(self, patch_id: str) -> dict[str, IPatch]:
-        """get the von neumann neighbors of the patch as ids
+        ### neumann neighbors
+        get the von neumann neighbors of the patch as ids
         if the patch has id 3_3, the von neumann neighbors are:
         None    2_3    None
         3_2    None   3_4
         None    4_3    None
 
-        3_3 is not included, nor the None
-
-
         Args:
             patch_id (str): the patch id
+            type (str): the type of neighbors to get, either 'moore' or 'von_neumann'
+            ignore_oob (bool, optional): ignore out of bounds neighbors. Defaults to False.
 
         Returns:
-            list[str]: the von neumann neighbors as ids
+            set[str]: the neighbors as ids
+
+        Raises:
+            ValueError: if the patch has neighbors outside of the grid
+
         """
 
         patch = self.get_patch(patch_id)
 
-        neighbors = set(
+        moore_neighbors = set(
             [
-                IPatch.build_id_contract(patch.x, patch.y + 1),
-                IPatch.build_id_contract(patch.x - 1, patch.y),
-                IPatch.build_id_contract(patch.x + 1, patch.y),
-                IPatch.build_id_contract(patch.x, patch.y - 1),
+                Patch.build_id_contract(patch.x - 1, patch.y + 1),
+                Patch.build_id_contract(patch.x, patch.y + 1),
+                Patch.build_id_contract(patch.x + 1, patch.y + 1),
+                Patch.build_id_contract(patch.x - 1, patch.y),
+                Patch.build_id_contract(patch.x + 1, patch.y),
+                Patch.build_id_contract(patch.x - 1, patch.y - 1),
+                Patch.build_id_contract(patch.x, patch.y - 1),
+                Patch.build_id_contract(patch.x + 1, patch.y - 1),
             ]
         )
 
-        # check if neighbors are in grid
-        if not neighbors.issubset(self.patch_ids):
-            raise ValueError(f"Patch {patch_id} has neighbors outside of grid")
+        von_neumann_neighbors = set(
+            [
+                Patch.build_id_contract(patch.x, patch.y + 1),
+                Patch.build_id_contract(patch.x - 1, patch.y),
+                Patch.build_id_contract(patch.x + 1, patch.y),
+                Patch.build_id_contract(patch.x, patch.y - 1),
+            ]
+        )
 
-        return {p: self.get_patch(p) for p in neighbors}
+        if type == "moore":
+            neighbors_build = moore_neighbors
+        elif type == "von_neumann":
+            neighbors_build = von_neumann_neighbors
+        else:
+            raise ValueError(f"Unknown type '{type}'")
+
+        # check if neighbors are in grid
+        if not neighbors_build.issubset(self.patch_ids):
+            # check if we should ignore out of bounds neighbors
+            if ignore_oob:
+                to_del = neighbors_build.difference(self.patch_ids)
+                neighbors_build.difference_update(to_del)
+            else:
+                raise ValueError(f"Patch {patch_id} has neighbors outside of grid")
+
+        return neighbors_build
+
+    def _update_patches_by_neighbors(self) -> None:
+        """update all the patches by their neighbors"""
+
+        for patch in self._patches.values():
+            patch._moore_neighbor_ids = self.get_neighbors(
+                patch_id=patch.agent_id,
+                type="moore",
+                ignore_oob=True,
+            )
+            patch._von_neumann_neighbor_ids = self.get_neighbors(
+                patch_id=patch.agent_id,
+                type="von_neumann",
+                ignore_oob=True,
+            )
+
+        return

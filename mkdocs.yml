@@ -9,6 +9,7 @@ nav:
     - Introduction: development.md
     - Vision and Idea: development/vision.md
     - Step 1: development/step1.md
+  - Code Reference: reference/
   - About: about.md
 
 plugins:
@@ -22,6 +23,25 @@ plugins:
       enable_creation_date: false
       type: timeago
   - git-authors
+  - gen-files:
+      scripts:
+        - docs/gen_ref_pages.py
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [agent_guy]
+          import:
+            - https://docs.python.org/3/objects.inv
+            - https://mkdocstrings.github.io/objects.inv
+            - https://mkdocstrings.github.io/griffe/objects.inv
+          options:
+            docstring_style: google
+            docstring_options:
+              ignore_init_summary: no
+            merge_init_into_class: yes
+            separate_signature: yes
+            show_source: yes
+            show_root_full_path: no
 
 markdown_extensions:
   - attr_list

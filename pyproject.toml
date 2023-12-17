@@ -37,9 +37,15 @@ pyfakefs = "*"
 click = "*"
 isort = "*"
 taskipy = "*"
+jupyterlab = "*"
+pyparsing = "*"
+jupyter-bokeh = "*"
+
+[tool.poetry.group.mkdocs.dependencies]
 mkdocs = "*"
 livereload = "*"
 mkdocs-material = "*"
+mkdocs-gen-files = "*"
 mkdocs-macros-plugin = "*"
 mkdocs-extra-sass-plugin = "*"
 mkdocs-table-reader-plugin = "*"
@@ -51,9 +57,10 @@ mkdocs-section-index = "*"
 mkdocs-autorefs = "*"
 mkdocs-git-revision-date-localized-plugin = "*"
 mkdocs-git-authors-plugin = "*"
-jupyterlab = "*"
-pyparsing = "*"
-jupyter-bokeh = "*"
+mkdocstrings-python = "*"
+mkdocstrings = "*"
+mkdocs-coverage = "*"
+
 
 [build-system]
 requires = ["poetry-core"]
@@ -65,6 +72,8 @@ fail_under = 70
 [tool.isort]
 # https://github.com/timothycrosley/isort/
 py_version = 39
+
+extend_skip = ["__init__.py"]
 
 known_typing = [
     "typing",
@@ -90,6 +99,11 @@ color_output = true
 [tool.mypy]
 # https://mypy.readthedocs.io/en/latest/config_file.html#using-a-pyproject-toml-file
 python_version = 3.9
+
+# exclude tests and docs folders
+exclude = ["tests", "docs"]
+
+
 pretty = true
 show_traceback = true
 color_output = true

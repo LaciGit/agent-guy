@@ -1,11 +1,11 @@
-from agent_guy.agent import IPatch, ITurtle
+from agent_guy.agent import Patch, Turtle
 
 
-class MyPatch(IPatch):
+class MyPatch(Patch):
     # a very basic patch
     pass
 
 
-class MyTurtle(ITurtle):
+class MyTurtle(Turtle):
     # a very basic turtle on
     pass

@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from agent_guy.agent import IPatch, ITurtle
+from agent_guy.agent import Patch, Turtle
 from agent_guy.model import IModel
 from agent_guy.world import Grid, IWorld
 from tests.mocks.mocks import MyPatch, MyTurtle
@@ -30,16 +30,14 @@ class TestModel(TestCase):
 
             def setup_agents(self) -> None:
                 # create a turtle
-                turtle = ITurtle()
-                turtle2 = ITurtle()
+                turtle = Turtle()
+                turtle2 = Turtle()
 
                 # add turtle to grid
-                self.add_turtle_to_grid(turtle, patch_id=IPatch.build_id_contract(0, 0))
+                self.add_turtle_to_grid(turtle, patch_id=Patch.build_id_contract(0, 0))
 
                 # add turtle2 to grid
-                self.add_turtle_to_grid(
-                    turtle2, patch_id=IPatch.build_id_contract(0, 0)
-                )
+                self.add_turtle_to_grid(turtle2, patch_id=Patch.build_id_contract(0, 0))
 
                 self.remove_turtle_from_grid(turtle2)
 
@@ -54,7 +52,7 @@ class TestModel(TestCase):
         # turtle must be on the first patch of the grid (0, 0)
         self.assertEqual(
             list(model.turtles.values())[0].patch_id,
-            IPatch.build_id_contract(0, 0),
+            Patch.build_id_contract(0, 0),
         )
 
         # check that turtle2 is not on grid

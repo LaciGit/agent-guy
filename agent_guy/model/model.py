@@ -2,7 +2,7 @@ from typing import Any
 
 from abc import ABC, abstractmethod
 
-from agent_guy.agent import IPatch, ITurtle
+from agent_guy.agent import Patch, Turtle
 from agent_guy.world import Grid
 
 
@@ -20,7 +20,7 @@ class IModel(ABC):
             raise ValueError("'grid' must be of type 'Grid'")
 
         # self._patches: dict[str, IPatch] = self.grid.build_patches()
-        self.turtles: dict[str, ITurtle] = dict()
+        self.turtles: dict[str, Turtle] = dict()
 
         super().__init__()
 
@@ -36,7 +36,7 @@ class IModel(ABC):
     def step(self) -> None:
         pass
 
-    def add_turtle_to_grid(self, turtle: ITurtle, patch_id: str) -> None:
+    def add_turtle_to_grid(self, turtle: Turtle, patch_id: str) -> None:
         """add a turtle to the grid
 
         Args:
@@ -60,11 +60,14 @@ class IModel(ABC):
         # update current list of turtles
         self.turtles[turtle.agent_id] = turtle
 
-    def remove_turtle_from_grid(self, turtle: ITurtle) -> None:
-        """remove turtle from the grid
+    def remove_turtle_from_grid(self, turtle: Turtle) -> None:
+        """remove a turtle from the grid
 
         Args:
-            turtle (ITurtle): turtle object
+            turtle (ITurtle): the turtle to remove from the grid
+
+        Raises:
+            ValueError: if the turtle is not in the grid
         """
 
         # check if turtle in grid

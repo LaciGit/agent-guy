@@ -40,6 +40,8 @@ taskipy = "*"
 jupyterlab = "*"
 pyparsing = "*"
 jupyter-bokeh = "*"
+gprof2dot = "^2022.7.29"
+snakeviz = "^2.2.0"
 
 [tool.poetry.group.mkdocs.dependencies]
 mkdocs = "*"

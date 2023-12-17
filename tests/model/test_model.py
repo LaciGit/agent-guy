@@ -2,8 +2,7 @@ from unittest import TestCase
 
 from agent_guy.agent import Patch, Turtle
 from agent_guy.model import IModel
-from agent_guy.world import Grid, IWorld
-from tests.mocks.mocks import MyPatch, MyTurtle
+from agent_guy.world import Grid
 
 
 class TestModel(TestCase):
@@ -44,7 +43,7 @@ class TestModel(TestCase):
             def step(self) -> None:
                 pass
 
-        model = MyModel(grid=Grid(width=10, height=10))
+        model = MyModel(grid=Grid(width=3, height=3))
         model.setup_agents()
 
         # check if turtle is in grid

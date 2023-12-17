@@ -1,6 +1,12 @@
 # project space
 .vscode
 
+# performance
+test_perf.py
+output.png
+output.pstats
+output.prof
+
 data/input
 data/output
 

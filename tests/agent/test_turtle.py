@@ -9,32 +9,32 @@ class TestTurtle(unittest.TestCase):
         self.cell = LifeCell()
 
     def test_init(self) -> None:
-        self.assertEqual(self.cell.status, "dead")
+        self.assertEqual(self.cell.living, False)
 
     def test_cell_of_life(self) -> None:
         self.cell.live()
-        self.assertEqual(self.cell.status, "alive")
-        self.assertEqual(self.cell.get_color(), Colors.white)
+        self.assertEqual(self.cell.living, True)
+        self.assertEqual(self.cell.get_color(), Colors.black)
 
         self.cell.die()
-        self.assertEqual(self.cell.status, "dead")
-        self.assertEqual(self.cell.get_color(), Colors.black)
+        self.assertEqual(self.cell.living, False)
+        self.assertEqual(self.cell.get_color(), Colors.white)
 
         # set cell count to 3 and check if cell is alive
         self.cell.neighbors_alive = 3
         self.cell.act()
-        self.assertEqual(self.cell.status, "alive")
-        self.assertEqual(self.cell.get_color(), Colors.white)
+        self.assertEqual(self.cell.living, True)
+        self.assertEqual(self.cell.get_color(), Colors.black)
 
         # set cell count to 2 and check if cell is alive
         self.cell.neighbors_alive = 2
         self.cell.act()
-        self.assertEqual(self.cell.status, "alive")
+        self.assertEqual(self.cell.living, True)
 
         # set cell count to 1 and check if cell is dead
         self.cell.neighbors_alive = 1
         self.cell.act()
-        self.assertEqual(self.cell.status, "dead")
+        self.assertEqual(self.cell.living, False)
 
     def test_neighbors(self) -> None:
         # three cells and we fake that one of them has two neighbors

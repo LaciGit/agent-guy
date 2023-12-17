@@ -1,22 +1,29 @@
 from typing import Any
 
+import random
+
 from agent_guy import Grid, IModel, Patch, Turtle
 from agent_guy.agent.agent import Colors
 
 
 class LifeCell(Turtle):
-    def __init__(self, color: Colors = Colors.white) -> None:
+    def __init__(self, color: Colors = Colors.white, living: bool = False) -> None:
         self.neighbors_alive = 0
-        self.status = "dead"
+        self.living = living
+        if living:
+            color = Colors.black
         super().__init__(color)
+
+    def __str__(self) -> str:
+        return self._color.name.upper()
 
     # these are custom functions for the user
     def observe(self) -> None:
         # retruns me the neighbors agent objects
         # there could be also neighbors patches
-        neighbors = self.von_neumann_neighbors.values()
+        neighbors = self.moore_neighbors.values()
         # count the number of alive neighbors
-        self.neighbors_alive = len([n for n in neighbors if n.status == "alive"])
+        self.neighbors_alive = len([n for n in neighbors if n.living])
 
         return
 
@@ -36,18 +43,20 @@ class LifeCell(Turtle):
         return
 
     def die(self) -> None:
-        self.status = "dead"
-        self.set_color(Colors.black)
+        self.living = False
+        self.set_color(Colors.white)
         return
 
     def live(self) -> None:
-        self.status = "alive"
-        self.set_color(Colors.white)
+        self.living = True
+        self.set_color(Colors.black)
         return
 
 
 class LifeModel(IModel):
     def __init__(self, grid: Grid, parameters: dict[str, Any] = dict()) -> None:
+        parameters["chance_alive"] = 0.5
+
         super().__init__(grid, parameters)
 
     def setup_grid(self) -> None:
@@ -58,28 +67,22 @@ class LifeModel(IModel):
         # setup a blinker in and expect a grid of size 3x3
         # the blinker is in the middle of the grid
 
-        # turtles
-        t1 = LifeCell()
-        t2 = LifeCell()
-        t3 = LifeCell()
+        # create for each patch a turtle
+        for patch_id in self.grid.patch_ids:
+            if random.random() <= self.parameters["chance_alive"]:
+                t1 = LifeCell(living=True)
+            else:
+                t1 = LifeCell(living=False)
 
-        # add turtles to grid
-        self.add_turtle_to_grid(
-            turtle=t1,
-            patch_id=Patch.build_id_contract(x=0, y=1),
-        )
-        self.add_turtle_to_grid(
-            turtle=t2,
-            patch_id=Patch.build_id_contract(x=1, y=1),
-        )
-        self.add_turtle_to_grid(
-            turtle=t3,
-            patch_id=Patch.build_id_contract(x=2, y=1),
-        )
+            self.add_turtle_to_grid(
+                turtle=t1,
+                patch_id=patch_id,
+            )
 
         return
 
     def step(self) -> None:
-        self.ask_agents(func=["observe"])
+        self.ask_turtles(func=["observe"])
+        self.ask_turtles(func=["act"])
 
-        self.ask_agents(func=["act"])
+        # self.ask_turtles(func=["observe", "act"])

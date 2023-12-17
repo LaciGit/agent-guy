@@ -147,5 +147,16 @@ class Turtle(IAgent):
 
         return
 
+    def overwrite_neighbors(
+        self,
+        neighbors: dict[str, "Turtle"],
+        func_name: str,
+    ) -> None:
+        dict_name = f"_{func_name}_neighbors"
+        count_name = f"_count_{func_name}_neighbors"
+
+        setattr(self, dict_name, neighbors)
+        setattr(self, count_name, len(neighbors.keys()))
+
     def _build_id(self) -> str:
         return str(uuid4())

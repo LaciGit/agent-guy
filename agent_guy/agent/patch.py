@@ -10,8 +10,8 @@ class Patch(IAgent):
         self._turtles_on_patch: dict[str, Turtle] = {}
 
         # the neighbors of the patch
-        self._moore_neighbor_ids: set[str] = set()
-        self._von_neumann_neighbor_ids: set[str] = set()
+        self.moore_neighbor_ids: set[str] = set()
+        self.von_neumann_neighbor_ids: set[str] = set()
 
         super().__init__(color)
 
@@ -81,7 +81,7 @@ class Patch(IAgent):
 
         # if no turtle ids provided, return all turtles
         if not turtle_ids:
-            return self._turtles_on_patch.copy()
+            return self._turtles_on_patch
 
         # check if all turtle ids are on the patch
         dict_turtles = {}

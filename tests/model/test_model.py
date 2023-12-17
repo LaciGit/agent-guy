@@ -20,7 +20,7 @@ class TestModel(TestCase):
         model = MyModel(grid=Grid(width=10, height=10))
 
         # check if all patches are built
-        self.assertEqual(len(model.grid._patches), 100)
+        self.assertEqual(len(model.grid.patches), 100)
 
     def test_setup_agents(self) -> None:
         class MyModel(IModel):

@@ -11,10 +11,10 @@ class Grid(IWorld):
         self.height = height
 
         # the patches of the grid
-        self._patches: dict[str, Patch] = self._build_patches()
+        self.patches: dict[str, Patch] = self._build_patches()
 
         # only present after build was called
-        self.patch_ids: set[str] = set(self._patches.keys())
+        self.patch_ids: set[str] = set(self.patches.keys())
         self.count_patches: int = len(self.patch_ids)
         self._update_patches_by_neighbors()
 
@@ -35,7 +35,7 @@ class Grid(IWorld):
     #         row = []
     #         for i_height in range(self.height):
     #             patch_id = Patch.build_id_contract(i_width, i_height)
-    #             patch = self.get_patch(patch_id)
+    #             patch = self.patches[patch_id]
     #             row.append(patch)
     #         matrix.append(row)
 
@@ -48,7 +48,7 @@ class Grid(IWorld):
     #         row = []
     #         for i_height in range(self.height):
     #             patch_id = Patch.build_id_contract(i_width, i_height)
-    #             patch = self.get_patch(patch_id)
+    #             patch = self.patches[patch_id]
     #             if t := list(patch.get_turtles().values()):
     #                 row.append(str(t[0]))
     #             else:
@@ -74,27 +74,6 @@ class Grid(IWorld):
                 patches[patch.agent_id] = patch
 
         return patches
-
-    def get_patch(self, patch_id: str) -> Patch:
-        """get a patch by its id
-
-        Args:
-            patch_id (str): the patch id
-
-        Raises:
-            ValueError: if the patch id does not exist
-
-        Returns:
-            IPatch: the patch
-        """
-
-        # patch = self._patches.get(patch_id, None)
-
-        # if not patch:
-        #     raise ValueError(f"Patch {patch_id} does not exist in grid")
-
-        # return patch
-        return self._patches[patch_id]
 
     def get_neighbors(
         self,
@@ -133,7 +112,7 @@ class Grid(IWorld):
 
         """
 
-        patch = self.get_patch(patch_id)
+        patch = self.patches[patch_id]
 
         moore_neighbors = set(
             [
@@ -178,7 +157,7 @@ class Grid(IWorld):
     def _update_patches_by_neighbors(self) -> None:
         """update all the patches by their neighbors"""
 
-        for patch in self._patches.values():
+        for patch in self.patches.values():
             patch.moore_neighbor_ids = self.get_neighbors(
                 patch_id=patch.agent_id,
                 type="moore",
@@ -192,19 +171,25 @@ class Grid(IWorld):
 
         return
 
-    def update_turtles_by_neighbors(self, turtles: dict[str, Turtle]) -> None:
+    def update_turtles_by_neighbors(
+        self,
+        turtles: dict[str, Turtle],
+        neighborhood: list[str] = ["moore", "von_neumann"],
+    ) -> None:
         """update the turtles by their neighbors
 
         Args:
             turtles (dict[str, Turtle]): the turtles to update
+            neighborhood (list[str], optional): the neighborhoods to update.
+                Defaults to ["moore", "von_neumann"].
         """
 
         # update the neighbors of the turtles
         for turtle in turtles.values():
             # get turtle's patch
-            patch = self.get_patch(turtle.patch_id)
+            patch = self.patches[turtle.patch_id]
 
-            for func_name in ["moore", "von_neumann"]:
+            for func_name in neighborhood:
                 # update_func_name = f"update_{func_name}_neighbors"
                 # update_func_name = f"update_{func_name}_neighbors"
 
@@ -220,15 +205,8 @@ class Grid(IWorld):
                 # get all new patch_neighbors from the moore patch_neighbors
                 new_neighbors = {}
                 for n_id in patch_neighbors:
-                    n_patch = self.get_patch(n_id)
-                    # new_neighbors = {
-                    #     **new_neighbors,
-                    #     **{
-                    #         a_id: a
-                    #         for a_id, a in n_patch.get_turtles().items()
-                    #         if a_id not in current_neighbors.keys()
-                    #     },
-                    # }
+                    n_patch = self.patches[n_id]
+
                     new_neighbors.update(
                         {
                             a_id: a
@@ -236,19 +214,6 @@ class Grid(IWorld):
                             if a_id not in current_neighbors.keys()
                         }
                     )
-
-                # # get neighbors to delete
-                # del_neighbors = {
-                #     k: v
-                #     for k, v in current_neighbors.items()
-                #     if k not in new_neighbors.keys()
-                # }
-
-                # # update moore neighbors
-                # getattr(turtle, update_func_name)(
-                #     del_neighbors=del_neighbors,
-                #     add_neighbors=new_neighbors,
-                # )
 
                 # update moore neighbors
                 turtle.overwrite_neighbors(

@@ -14,9 +14,13 @@ class IModel(ABC):
         self,
         grid: Grid,
         parameters: dict[str, Any] = dict(),
+        neighborhood: str = "moore",
     ) -> None:
         self.grid = grid
         self.parameters = parameters
+
+        # which neighborhood to use in the model
+        self.neighborhood = neighborhood
 
         # check if grid is grid
         if not isinstance(self.grid, Grid):
@@ -75,7 +79,7 @@ class IModel(ABC):
             raise ValueError(f"Turtle {turtle} already in grid")
 
         # get patch
-        patch = self.grid.get_patch(patch_id)
+        patch = self.grid.patches[patch_id]
 
         # add turtle to patch
         patch.add_turtle(turtle)
@@ -98,7 +102,7 @@ class IModel(ABC):
             raise ValueError(f"Turtle {turtle} not in grid")
 
         # get patch
-        patch = self.grid.get_patch(turtle.patch_id)
+        patch = self.grid.patches[turtle.patch_id]
 
         # remove turtle from patch
         patch.rm_turtle(turtle)
@@ -109,21 +113,14 @@ class IModel(ABC):
     def ask_agents(self, func: list[str]) -> None:
         raise NotImplementedError("'ask_agents' not implemented")
 
-    @cached_property
-    def _pos_turtle_funcs(self) -> set[str]:
-        return set(
-            chain.from_iterable(list([dir(turtle) for turtle in self.turtles.values()]))
-        )
-
     def ask_turtles(self, func: list[str]) -> None:
-        # possible functions in turtles
-        if not set(func).issubset(self._pos_turtle_funcs):
-            raise ValueError(f"Invalid function in: {func}")
-
         # get execution order of turtles
         turtle_ids = self.executor.execute_order(list(self.turtles.keys()))
 
-        self.grid.update_turtles_by_neighbors(turtles=self.turtles)
+        self.grid.update_turtles_by_neighbors(
+            turtles=self.turtles,
+            neighborhood=[self.neighborhood],
+        )
 
         for turtle_id in turtle_ids:
             for func_name in func:

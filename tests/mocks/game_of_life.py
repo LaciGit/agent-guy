@@ -84,5 +84,3 @@ class LifeModel(IModel):
     def step(self) -> None:
         self.ask_turtles(func=["observe"])
         self.ask_turtles(func=["act"])
-
-        # self.ask_turtles(func=["observe", "act"])
